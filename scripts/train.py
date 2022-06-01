@@ -194,7 +194,7 @@ def main():
     parser.add_argument(
         "--nb-channels",
         type=int,
-        default=2,
+        default=1,
         help="set number of channels for model (1, 2)",
     )
     parser.add_argument(

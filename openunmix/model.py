@@ -6,8 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM, BatchNorm1d, Linear, Parameter
-from .filtering import wiener
-from .transforms import make_filterbanks, ComplexNorm
+from filtering import wiener
+from transforms import make_filterbanks, ComplexNorm
 
 
 class OpenUnmix(nn.Module):

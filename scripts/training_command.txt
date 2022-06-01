@@ -1,0 +1,1 @@
+python train.py --target guitar --batch-size 64 --seed 2022 --dataset sourcefolder --root ../dataset/data --target-dir guitar --interferer-dirs interferers

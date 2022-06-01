@@ -1,5 +1,9 @@
-from openunmix import utils
+import torch
+import torchaudio
+import utils
 
+DEVICE = "cpu"
+SAMPLE_RATE = 44100
 
 def separate(
     audio,
@@ -78,3 +82,38 @@ def separate(
     estimates = separator(audio)
     estimates = separator.to_dict(estimates, aggregate_dict=aggregate_dict)
     return estimates
+
+
+
+def Transform(audio_dir, device=DEVICE):
+    signal, sr = torchaudio.load(audio_dir)
+
+    signal = signal.to(device)
+    signal = _mix_down_if_necessary(signal)
+    signal = _resample_if_necessary(signal, sr, device)
+
+    return signal, SAMPLE_RATE
+
+
+def _mix_down_if_necessary(signal):
+    if signal.shape[0] > 1:
+        signal = torch.mean(signal, dim=0, keepdim=True)
+    return signal
+
+def _resample_if_necessary(signal, sr, device):
+    if sr != SAMPLE_RATE:
+        resampler = torchaudio.transforms.Resample(
+            sr, SAMPLE_RATE).to(device)
+        signal = resampler(signal)
+    return signal
+
+
+if __name__ == "__main__":
+    root_dir = "C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/test/"
+    file = root_dir + 'Red Hot Chili Peppers - Soul To Squeeze [Official Music Video].wav'
+    model_path = "C:/Users/Luke/Desktop/coding/unmix_guitar_separation/scripts/open-unmix"
+    save_dir = "C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/separations/"
+    audio, rate = Transform(file)
+    estimates = separate(audio, rate, model_path, "guitar", residual=True)
+    torchaudio.save(save_dir+"guitar.wav", estimates['guitar'][0], SAMPLE_RATE)
+    torchaudio.save(save_dir+"residual.wav", estimates['residual'][0], SAMPLE_RATE)
