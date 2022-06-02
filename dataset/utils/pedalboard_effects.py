@@ -1,12 +1,14 @@
 import dis
 import random
 import numpy as np
+import torch
+import time
 from pedalboard import Pedalboard, Chorus, Reverb, Compressor, Gain, Phaser, Delay, Distortion, PitchShift
 from pedalboard.io import AudioFile
 
-with AudioFile('../data/guitar/00_BN2-131-B_solo_hex_cln.wav', 'r') as f:
-  audio = f.read(f.frames)
-  samplerate = f.samplerate
+# with AudioFile('../data/guitar/00_BN2-131-B_solo_hex_cln.wav', 'r') as f:
+#   audio = f.read(f.frames)
+#   samplerate = f.samplerate
 
 
 chorus_choices = [
@@ -97,9 +99,20 @@ def create_subtle_pedalboard():
 # with AudioFile('processed-output.wav', 'w', samplerate, effected.shape[0]) as f:
 #   f.write(effected)
 
-for i in range(10):
-    board = create_subtle_pedalboard()
-    effected = board(audio, samplerate)
+frame_offset = 10000
 
-    with AudioFile('processed-output-{}.wav'.format(i), 'w', samplerate, effected.shape[0]) as f:
-        f.write(effected)
+num_frames = 264600
+
+start = time.time()
+for i in range(100):
+    with AudioFile('../data/guitar/00_BN2-131-B_solo_hex_cln.wav', 'r') as f:
+        audio = f.read(f.frames)
+        samplerate = f.samplerate
+    board = create_pedalboard('cln')
+    effected = board(audio, samplerate)
+    array = np.array([effected[0][frame_offset:frame_offset+num_frames]])
+    sig = torch.from_numpy(array)
+
+end = time.time()
+
+print("total:",end-start,"seconds")

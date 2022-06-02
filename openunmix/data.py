@@ -2,11 +2,17 @@ import argparse
 import random
 from pathlib import Path
 from typing import Optional, Union, Tuple, List, Any, Callable
+import numpy as np
 
 import torch
 import torch.utils.data
 import torchaudio
 import tqdm
+
+from pedalboard.io import AudioFile
+from openunmix.utils import create_pedalboard, create_subtle_pedalboard
+
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def load_info(path: str) -> dict:
@@ -62,7 +68,21 @@ def load_audio(
             info = load_info(path)
         num_frames = int(dur * info["samplerate"])
         frame_offset = int(start * info["samplerate"])
+
         sig, rate = torchaudio.load(path, num_frames=num_frames, frame_offset=frame_offset)
+        if random.random() < 0.5:
+            np_audio = sig.numpy()
+
+            if str(path).__contains__("interferer"):
+                board = create_subtle_pedalboard()
+                effected = board(np_audio, rate)
+            else:
+                board = create_pedalboard(str(path)[-7:-4])
+                effected = board(np_audio, rate)
+
+            array = np.array([effected[0]])
+            sig = torch.from_numpy(array)
+
         return sig, rate
 
 

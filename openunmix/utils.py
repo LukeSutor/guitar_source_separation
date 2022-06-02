@@ -2,6 +2,7 @@ from typing import Optional, Union
 
 import torch
 import os
+import sys
 import numpy as np
 import torchaudio
 import warnings
@@ -10,12 +11,13 @@ from contextlib import redirect_stderr
 import io
 import json
 
+print(sys.path[0])
+
 from model import OpenUnmix as openunmix
 import model
 
 import random
 from pedalboard import Pedalboard, Chorus, Reverb, Compressor, Gain, Phaser, Delay, Distortion, PitchShift
-from pedalboard.io import AudioFile
 
 
 def bandwidth_to_max_bin(rate: float, n_fft: int, bandwidth: float) -> np.ndarray:

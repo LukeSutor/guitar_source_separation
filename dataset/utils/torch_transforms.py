@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 import os
 import torchaudio
 import torch
@@ -35,8 +36,13 @@ def _resample_if_necessary(signal, sr, device):
 
 
 if __name__ == "__main__":
-    root = 'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/utils/'
-    Transform(root+"processed-output.wav", root+"test.wav")
+    test = NULL
+    if test:
+        print("YES")
+    else:
+        print("NO")
+    # root = 'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/utils/'
+    # Transform(root+"processed-output.wav", root+"test.wav")
     # for file in os.listdir('C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/train/guitar'):
     #     if file.endswith('.wav'):
     #         Transform(
