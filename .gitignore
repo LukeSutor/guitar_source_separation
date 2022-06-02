@@ -102,3 +102,5 @@ Temporary Items
 #.pth and .chkpnt files
 *.pth
 *.chkpnt
+
+training_runs/
