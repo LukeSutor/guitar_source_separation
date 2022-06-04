@@ -1,4 +1,5 @@
 import argparse
+import math
 import random
 from pathlib import Path
 from typing import Optional, Union, Tuple, List, Any, Callable
@@ -8,6 +9,7 @@ import torch
 import torch.utils.data
 import torchaudio
 import tqdm
+import json
 
 from pedalboard.io import AudioFile
 from openunmix.utils import create_pedalboard, create_subtle_pedalboard
@@ -70,6 +72,8 @@ def load_audio(
         frame_offset = int(start * info["samplerate"])
 
         sig, rate = torchaudio.load(path, num_frames=num_frames, frame_offset=frame_offset)
+
+
         if random.random() < 0.5:
             np_audio = sig.numpy()
 
@@ -77,7 +81,17 @@ def load_audio(
                 board = create_subtle_pedalboard()
                 effected = board(np_audio, rate)
             else:
-                board = create_pedalboard(str(path)[-7:-4])
+                # Load ema to weight pedalboard
+                try:
+                    with open(Path("./open-unmix/guitar.json"), "r") as stream:
+                        results = json.load(stream)
+
+                        ema = results["train_ema_history"][-1]
+                        ema = (1 - min(ema, 0.99)) if ema > 0 else (1 - max(ema, -0.99))
+                except:
+                    ema = 1
+
+                board = create_pedalboard(str(path)[-7:-4], ema / 2)
                 effected = board(np_audio, rate)
 
             array = np.array([effected[0]])

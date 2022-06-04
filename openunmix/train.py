@@ -322,6 +322,7 @@ def main():
             disable=args.quiet,
         )
         train_losses = results["train_loss_history"]
+        train_emas = results["train_ema_history"]
         valid_losses = results["valid_loss_history"]
         train_times = results["train_time_history"]
         best_epoch = results["best_epoch"]
@@ -331,6 +332,7 @@ def main():
     else:
         t = tqdm.trange(1, args.epochs + 1, disable=args.quiet)
         train_losses = []
+        train_emas = []
         valid_losses = []
         train_times = []
         best_epoch = 0
@@ -341,9 +343,17 @@ def main():
         end = time.time()
         train_loss = train(args, unmix, encoder, device,
                            train_sampler, optimizer, scaler = scaler)
+                           
+        # Calculate exponential moving average for use with RandAugment
+        if epoch >= 3:
+            train_ema = (((train_loss - train_losses[-1]) / train_losses[-1]) * 0.9) + train_emas[-1] * 0.1
+        else:
+            train_ema = 0
+
         valid_loss = valid(args, unmix, encoder, device, valid_sampler)
         scheduler.step(valid_loss)
         train_losses.append(train_loss)
+        train_emas.append(train_ema)
         valid_losses.append(valid_loss)
 
         t.set_postfix(train_loss=train_loss, val_loss=valid_loss)
@@ -373,6 +383,7 @@ def main():
             "best_loss": es.best,
             "best_epoch": best_epoch,
             "train_loss_history": train_losses,
+            "train_ema_history": train_emas,
             "valid_loss_history": valid_losses,
             "train_time_history": train_times,
             "num_bad_epochs": es.num_bad_epochs,

@@ -317,52 +317,7 @@ def preprocess(
 # Applies random pedalboard effects to the guitar audio samples
 # and less extreme effects to the interference audio samples
 
-chorus_choices = [
-    Chorus(centre_delay_ms = (random.choice([7,8])), depth = (0.10 + random.random() * 0.25), feedback = (0.10 + random.random() * 0.25)), # Classic chorus
-    Chorus(centre_delay_ms = (random.choice([1,2])), depth = (random.random() * 0.15), feedback=(0.7 + random.random() * 0.25)), # Flanger
-    Chorus(centre_delay_ms = (random.choice([1,2])), depth=(random.random() * 0.15), feedback=(0.7 + random.random() * 0.25), mix=1) # Vibrato
-]
-
-compressor_choices = [
-    Compressor()
-]
-
-delay_choices = [
-    Delay(delay_seconds = (random.random() * 0.5)),
-    Delay(delay_seconds = (random.random() * 0.5), feedback=(0.1 + random.random() * 0.15)),
-    Delay(delay_seconds = (random.random() * 0.5), mix = (0.35 + random.random() * 0.4)),
-    Delay(delay_seconds = (random.random() * 0.5), feedback=(0.1 + random.random() * 0.15), mix = (0.35 + random.random() * 0.4)),
-]
-
-distortion_choices = [
-    Distortion(drive_db = (25 + random.random() * 35)), # High
-    Distortion(drive_db = (random.random() * 25)) # Low
-]
-
-gain_choices = [
-    Gain(gain_db = (15 + random.random() * 15)), # High
-    Gain(gain_db = (random.random() * 15)) # Low
-]
-
-phaser_choices = [
-    Phaser(rate_hz = (random.random()), depth = (0.8 + random.random() * 0.8)),
-    Phaser(rate_hz = (1 + random.random() * 2), depth = (random.random() * 0.8)),
-    Phaser(rate_hz = (random.random()), depth = (0.8 + random.random() * 0.8), feedback = (0.2 + random.random() * 0.5)),
-    Phaser(rate_hz = (1 + random.random() * 2), depth = (random.random() * 0.8), feedback = (0.2 + random.random() * 0.5)),
-]
-
-pitchshift_choices = [
-    PitchShift(semitones =(random.random() * 5)), #Higher pitch
-    PitchShift(semitones =(-random.random() * 5)) # Lower pitch
-]
- 
-reverb_choices = [
-    Reverb(room_size = (random.random()), width = (random.random()), damping = (random.random())),
-    Reverb(room_size = (random.random()), width = (random.random()), damping = (random.random()), wet_level = (0.2 + random.random() * 0.4)),
-    Reverb(room_size = (random.random()), width = (random.random()), damping = (random.random()), dry_level = (0.2 + random.random() * 0.4))
-]
-
-def create_pedalboard(file_ending):
+def create_pedalboard(file_ending, ema):
     """
     Function to create a new pedalboard object from the above defined pedals 
     Takes in the argument 'file_ending', which is the last 3 digits of the filename
@@ -370,6 +325,55 @@ def create_pedalboard(file_ending):
     the audio sample is from a clean guitar recording, and more extreme distortions 
     and gains are put on it.
     """
+
+
+    # Pedals
+    chorus_choices = [
+    Chorus(centre_delay_ms = (random.choice([7,8])), depth = (0.10 + random.random() * 0.25 * ema), feedback = (0.10 + random.random() * 0.25 * ema)), # Classic chorus
+    Chorus(centre_delay_ms = (random.choice([1,2])), depth = (random.random() * 0.15 * ema), feedback=(0.7 + random.random() * 0.25 * ema)), # Flanger
+    Chorus(centre_delay_ms = (random.choice([1,2])), depth=(random.random() * 0.15 * ema), feedback=(0.7 + random.random() * 0.25 * ema), mix=1) # Vibrato
+    ]
+
+    compressor_choices = [
+        Compressor()
+    ]
+
+    delay_choices = [
+        Delay(delay_seconds = (random.random() * 0.5 * ema)),
+        Delay(delay_seconds = (random.random() * 0.5 * ema), feedback=(0.1 + random.random() * 0.15 * ema)),
+        Delay(delay_seconds = (random.random() * 0.5 * ema), mix = (0.35 + random.random() * 0.4 * ema)),
+        Delay(delay_seconds = (random.random() * 0.5 * ema), feedback=(0.1 + random.random() * 0.15 * ema), mix = (0.35 + random.random() * 0.4 * ema)),
+    ]
+
+    distortion_choices = [
+        Distortion(drive_db = (25 + random.random() * 35 * ema)), # High
+        Distortion(drive_db = (random.random() * 25 * ema)) # Low
+    ]
+
+    gain_choices = [
+        Gain(gain_db = (15 + random.random() * 15 * ema)), # High
+        Gain(gain_db = (random.random() * 15 * ema)) # Low
+    ]
+
+    phaser_choices = [
+        Phaser(rate_hz = (random.random() * ema), depth = (0.8 + random.random() * 0.8 * ema)),
+        Phaser(rate_hz = (1 + random.random() * 2 * ema), depth = (random.random() * 0.8 * ema)),
+        Phaser(rate_hz = (random.random() * ema), depth = (0.8 + random.random() * 0.8 * ema), feedback = (0.2 + random.random() * 0.5 * ema)),
+        Phaser(rate_hz = (1 + random.random() * 2 * ema), depth = (random.random() * 0.8 * ema), feedback = (0.2 + random.random() * 0.5 * ema)),
+    ]
+
+    pitchshift_choices = [
+        PitchShift(semitones =(random.random() * 5 * ema)), #Higher pitch
+        PitchShift(semitones =(-random.random() * 5 * ema)) # Lower pitch
+    ]
+    
+    reverb_choices = [
+        Reverb(room_size = (random.random() * ema), width = (random.random() * ema), damping = (random.random() * ema)),
+        Reverb(room_size = (random.random() * ema), width = (random.random() * ema), damping = (random.random() * ema), wet_level = (0.2 + random.random() * 0.4 * ema)),
+        Reverb(room_size = (random.random() * ema), width = (random.random() * ema), damping = (random.random() * ema), dry_level = (0.2 + random.random() * 0.4 * ema))
+    ]
+
+    # Pedalboard creation
     num_pedals = random.randint(1,4)
     possible_pedals = [chorus_choices, compressor_choices, delay_choices, distortion_choices, gain_choices, phaser_choices, pitchshift_choices, reverb_choices]
     pedal_categories = np.random.choice(8, size=num_pedals, replace=False)
