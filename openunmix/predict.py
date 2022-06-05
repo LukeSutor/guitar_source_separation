@@ -109,11 +109,11 @@ def _resample_if_necessary(signal, sr, device):
 
 
 if __name__ == "__main__":
-    root_dir = "C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/test/"
-    file = root_dir + 'Red Hot Chili Peppers - Soul To Squeeze [Official Music Video].wav'
-    model_path = "C:/Users/Luke/Desktop/coding/unmix_guitar_separation/openunmix/open-unmix"
-    save_dir = "C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/separations/"
+    root_dir = "../dataset/data/test/"
+    file = root_dir + 'Santana - Smooth.wav'
+    model_path = "./open-unmix"
+    save_dir = "../dataset/data/separations/"
     audio, rate = Transform(file)
     estimates = separate(audio, rate, model_path, "guitar", residual=True)
-    torchaudio.save(save_dir+"guitar1.wav", estimates['guitar'][0], SAMPLE_RATE)
-    torchaudio.save(save_dir+"residual1.wav", estimates['residual'][0], SAMPLE_RATE)
+    torchaudio.save(save_dir+"smooth_guitar.wav", estimates['guitar'][0], SAMPLE_RATE)
+    torchaudio.save(save_dir+"smooth_residual.wav", estimates['residual'][0], SAMPLE_RATE)

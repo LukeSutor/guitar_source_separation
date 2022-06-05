@@ -319,7 +319,7 @@ def preprocess(
 
 def create_pedalboard(file_ending, ema):
     """
-    Function to create a new pedalboard object from the above defined pedals 
+    Function to create a new pedalboard object from the defined pedals below.
     Takes in the argument 'file_ending', which is the last 3 digits of the filename
     from the path passed to the dataloader. If the last 3 digits are "cln", it means
     the audio sample is from a clean guitar recording, and more extreme distortions 
@@ -330,8 +330,8 @@ def create_pedalboard(file_ending, ema):
     # Pedals
     chorus_choices = [
     Chorus(centre_delay_ms = (random.choice([7,8])), depth = (0.10 + random.random() * 0.25 * ema), feedback = (0.10 + random.random() * 0.25 * ema)), # Classic chorus
-    Chorus(centre_delay_ms = (random.choice([1,2])), depth = (random.random() * 0.15 * ema), feedback=(0.7 + random.random() * 0.25 * ema)), # Flanger
-    Chorus(centre_delay_ms = (random.choice([1,2])), depth=(random.random() * 0.15 * ema), feedback=(0.7 + random.random() * 0.25 * ema), mix=1) # Vibrato
+    # Chorus(centre_delay_ms = (random.choice([1,2])), depth = (random.random() * 0.15 * ema), feedback=(0.7 + random.random() * 0.25 * ema)), # Flanger
+    # Chorus(centre_delay_ms = (random.choice([1,2])), depth=(random.random() * 0.15 * ema), feedback=(0.7 + random.random() * 0.25 * ema), mix=1) # Vibrato
     ]
 
     compressor_choices = [
@@ -374,9 +374,9 @@ def create_pedalboard(file_ending, ema):
     ]
 
     # Pedalboard creation
-    num_pedals = random.randint(1,4)
+    num_pedals = random.randint(1,2)
     possible_pedals = [chorus_choices, compressor_choices, delay_choices, distortion_choices, gain_choices, phaser_choices, pitchshift_choices, reverb_choices]
-    pedal_categories = np.random.choice(8, size=num_pedals, replace=False)
+    pedal_categories = np.random.choice(8, size=num_pedals, replace=False, p = [0.1, 0.1, 0.125, 0.175, 0.12, 0.105, 0.145, 0.13])
     if file_ending != "cln":
         board = []
         for i in pedal_categories:
@@ -390,21 +390,23 @@ def create_pedalboard(file_ending, ema):
     return Pedalboard(board)
 
 
-subtle_pedalboard = [
-    Reverb(room_size = (random.random() * 0.25), width = (random.random() * 0.25), damping = (random.random())),
-    PitchShift(semitones =((1 if random.random() < 0.5 else -1) * random.random() * 5)),
-    Phaser(rate_hz = (random.random() * 3), depth = (random.random() * 1.6), mix = (random.random() * 0.25)),
-    Gain(gain_db = (random.random() * 10)),
-    Distortion(drive_db = (random.random() * 15))
-]
 
-def create_subtle_pedalboard():
+def create_subtle_pedalboard(ema):
     """
-    Function to create a pedalboard from the above subtle_pedalboard object
+    Function to create a pedalboard from the subtle_pedalboard object
     that has less extreme augmentations to be used on the interferer audio 
     samples in order to increase the variation of data the model sees.
     """
-    num_pedals = random.choice([1,2,3])
+
+    subtle_pedalboard = [
+        Reverb(room_size = (random.random() * 0.25 * ema), width = (random.random() * 0.25 * ema), damping = (random.random() * ema)),
+        PitchShift(semitones =((1 if random.random() < 0.5 else -1) * random.random() * 5)),
+        Phaser(rate_hz = (random.random() * 3 * ema), depth = (random.random() * 1.6 * ema), mix = (random.random() * 0.25 * ema)),
+        Gain(gain_db = (random.random() * 10 * ema)),
+        Distortion(drive_db = (random.random() * 15 * ema))
+    ]
+
+    num_pedals = random.choice([1, 2])
     pedal_categories = np.random.choice(5, size=num_pedals, replace=False)
     board = [subtle_pedalboard[i] for i in pedal_categories]
 
