@@ -185,7 +185,7 @@ def main():
     parser.add_argument(
         "--hidden-size",
         type=int,
-        default=1024,
+        default=512,
         help="hidden size parameter of bottleneck layers",
     )
     parser.add_argument(
