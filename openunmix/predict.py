@@ -17,6 +17,7 @@ def separate(
     separator=None,
     device=None,
     filterbank="torch",
+    source="pth"
 ):
     """
     Open Unmix functional interface
@@ -66,6 +67,7 @@ def separate(
             device=device,
             pretrained=True,
             filterbank=filterbank,
+            source=source
         )
         separator.freeze()
         if device:
@@ -110,10 +112,12 @@ def _resample_if_necessary(signal, sr, device):
 
 if __name__ == "__main__":
     root_dir = "../dataset/data/test/"
-    file = root_dir + 'Santana - Smooth.wav'
+    filename = "mississippi_queen"
+    file = root_dir + filename + ".wav"
     model_path = "./open-unmix"
     save_dir = "../dataset/data/separations/"
+    source = "chkpnt"
     audio, rate = Transform(file)
-    estimates = separate(audio, rate, model_path, "guitar", residual=True)
-    torchaudio.save(save_dir+"smooth_guitar.wav", estimates['guitar'][0], SAMPLE_RATE)
-    torchaudio.save(save_dir+"smooth_residual.wav", estimates['residual'][0], SAMPLE_RATE)
+    estimates = separate(audio, rate, model_path, "guitar", residual=True, source=source)
+    torchaudio.save(save_dir+filename+"_guitar.wav", estimates['guitar'][0], SAMPLE_RATE)
+    torchaudio.save(save_dir+filename+"_residual.wav", estimates['residual'][0], SAMPLE_RATE)

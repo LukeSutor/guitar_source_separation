@@ -118,7 +118,7 @@ class EarlyStopping(object):
             self.is_better = lambda a, best: a > best + min_delta
 
 
-def load_target_models(targets, model_str_or_path="umxhq", device="cpu", pretrained=True):
+def load_target_models(targets, model_str_or_path="umxhq", device="cpu", pretrained=True, source = "pth"):
     """Core model loader
 
     target model path can be either <target>.pth, or <target>-sha256.pth
@@ -150,8 +150,14 @@ def load_target_models(targets, model_str_or_path="umxhq", device="cpu", pretrai
             with open(Path(model_path, target + ".json"), "r") as stream:
                 results = json.load(stream)
 
-            target_model_path = next(Path(model_path).glob("%s*.pth" % target))
-            state = torch.load(target_model_path, map_location=device)
+            if source == "chkpnt":
+                target_model_path = next(Path(model_path).glob("%s*.chkpnt" % target))
+                state = torch.load(target_model_path, map_location=device)["state_dict"]
+                print("loading from checkpoint")
+            else:
+                target_model_path = next(Path(model_path).glob("%s*.pth" % target))
+                state = torch.load(target_model_path, map_location=device)
+
 
             models[target] = model.OpenUnmix(
                 nb_bins=results["args"]["nfft"] // 2 + 1,
@@ -176,6 +182,7 @@ def load_separator(
     device: Union[str, torch.device] = "cpu",
     pretrained: bool = True,
     filterbank: str = "torch",
+    source="pth"
 ):
     """Separator loader
 
@@ -219,7 +226,7 @@ def load_separator(
             raise UserWarning("For custom models, please specify the targets")
 
         target_models = load_target_models(
-            targets=targets, model_str_or_path=model_path, pretrained=pretrained
+            targets=targets, model_str_or_path=model_path, pretrained=pretrained, source=source
         )
 
         with open(Path(model_path, "separator.json"), "r") as stream:

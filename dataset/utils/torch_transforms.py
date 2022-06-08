@@ -9,15 +9,17 @@ SAMPLE_RATE = 44100
 def Transform(audio_dir, save_dir, device=DEVICE):
     signal, sr = torchaudio.load(audio_dir)
 
+    print(sr)
+
     signal = signal.to(device)
     signal = _mix_down_if_necessary(signal)
     signal = _resample_if_necessary(signal, sr, device)
 
-    torchaudio.save(
-        save_dir,
-        signal,
-        SAMPLE_RATE
-    )
+    # torchaudio.save(
+    #     save_dir,
+    #     signal,
+    #     SAMPLE_RATE
+    # )
 
 
 def _mix_down_if_necessary(signal):
@@ -34,9 +36,16 @@ def _resample_if_necessary(signal, sr, device):
 
 
 if __name__ == "__main__":
-    for file in os.listdir('C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/newdata'):
+    # for file in os.listdir('C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/newdata'):
+    #     if file.endswith('.wav'):
+    #         Transform(
+    #             'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/newdata/'+file,
+    #             'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/newdata_cleaned/'+file
+    #         )
+
+    for file in os.listdir('C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/clipped_youtube'):
         if file.endswith('.wav'):
             Transform(
-                'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/newdata/'+file,
-                'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/newdata_cleaned/'+file
+                'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data/clipped_youtube/'+file,
+                'C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/'+file
             )
