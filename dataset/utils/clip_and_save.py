@@ -1,4 +1,5 @@
 import os
+import math
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
 
@@ -28,14 +29,14 @@ def minimizeFiles():
 
                 total_time += end_time - start_time
 
-                # ffmpeg_extract_subclip(
-                #     PATH_TO_CLIPS+file,
-                #     start_time,
-                #     end_time,
-                #     targetname=SAVE_PATH+' - '.join(segments[:-1])+'_'+str(j + 1)+".wav"
-                # ) 
+                ffmpeg_extract_subclip(
+                    PATH_TO_CLIPS+file,
+                    start_time,
+                    end_time,
+                    targetname=SAVE_PATH+' - '.join(segments[:-1])+'_'+str(j + 1)+".wav"
+                ) 
 
-    print(total_time)
+    print("saved",math.floor(total_time / 36) / 100,"hours of clips.")
 
 
 if __name__ == "__main__":
