@@ -1,1 +1,1 @@
-python train.py --target guitar --batch-size 64 --seed 2022 --dataset sourcefolder --root C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data --target-dir guitar --interferer-dirs interferers
+python train.py --target guitar --batch-size 64 --seed 2022 --hidden-size 1024 --patience 1000 --dataset sourcefolder --root C:/Users/Luke/Desktop/coding/unmix_guitar_separation/dataset/data --target-dir guitar --interferer-dirs interferers

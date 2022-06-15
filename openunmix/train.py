@@ -293,7 +293,7 @@ def main():
     torch.backends.cudnn.benchmark = True
 
     optimizer = torch.optim.Adam(
-        unmix.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+        unmix.parameters(), lr=args.lr, weight_decay=args.weight_decay, eps=1e-6) 
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer,

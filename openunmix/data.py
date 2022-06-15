@@ -74,28 +74,28 @@ def load_audio(
         sig, rate = torchaudio.load(path, num_frames=num_frames, frame_offset=frame_offset)
 
 
-        if random.random() < 0.5:
-            np_audio = sig.numpy()
+        # if random.random() < 0.5:
+        #     np_audio = sig.numpy()
 
-            # Load ema to weight pedalboard
-            try:
-                with open(Path("./open-unmix/guitar.json"), "r") as stream:
-                    results = json.load(stream)
+        #     # Load ema to weight pedalboard
+        #     try:
+        #         with open(Path("./open-unmix/guitar.json"), "r") as stream:
+        #             results = json.load(stream)
 
-                    ema = results["train_ema_history"][-1]
-                    ema = (1 - min(ema, 0.99)) if ema > 0 else (1 - max(ema, -0.99))
-            except:
-                ema = 0
+        #             ema = results["train_ema_history"][-1]
+        #             ema = (1 - min(ema, 0.99)) if ema > 0 else (1 - max(ema, -0.99))
+        #     except:
+        #         ema = 0
 
-            if str(path).__contains__("interferer"):
-                board = create_subtle_pedalboard(ema)
-                effected = board(np_audio, rate)
-            else:
-                board = create_pedalboard(str(path)[-7:-4], ema / 2)
-                effected = board(np_audio, rate)
+        #     if str(path).__contains__("interferer"):
+        #         board = create_subtle_pedalboard(ema)
+        #         effected = board(np_audio, rate)
+        #     else:
+        #         board = create_pedalboard(str(path)[-7:-4], ema / 2)
+        #         effected = board(np_audio, rate)
 
-            array = np.array([effected[0]])
-            sig = torch.from_numpy(array)
+        #     array = np.array([effected[0]])
+        #     sig = torch.from_numpy(array)
 
         return sig, rate
 
